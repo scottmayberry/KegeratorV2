@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "407876205449",
+    "firebase_url": "https://kegerator-f1da1.firebaseio.com",
+    "project_id": "kegerator-f1da1",
+    "storage_bucket": "kegerator-f1da1.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:407876205449:android:1c0b5facd4b55af0",
+        "android_client_info": {
+          "package_name": "com.example.sctma.kegeratorv1"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "407876205449-oai4nln0rl9k6cpcgcbikl53e49p5dp8.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.sctma.kegeratorv1",
+            "certificate_hash": "f1610e71548ba9b0e52cd15fcdddd24dd3e3f2a5"
+          }
+        },
+        {
+          "client_id": "407876205449-ougt1eoujjps7taa16k4l6sgf35rm901.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyApVRzYKJnSfolZyXX9VIWn4YjO9GzCgsw"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "407876205449-ougt1eoujjps7taa16k4l6sgf35rm901.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

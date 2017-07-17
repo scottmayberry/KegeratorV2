@@ -1,0 +1,20 @@
+<resources>
+    <string name="app_name">KegeratorV1</string>
+    <string name="title_activity_contact_info">ContactInfo</string>
+    <string name="APP_KEY">qe3m30w66xl0db5</string>
+    <string name="APP_SECRET">soqszd1m57py280</string>
+    <string name="APP_ACCESS_TOKEN">S6arYx_aWSAAAAAAAAAAGPxRPYj8hOzi57qtt0y2SJRWuyBkdCCIaN9fC8wwXVyg</string>
+    <string-array name="classification_array">
+        <item>Senior</item>
+        <item>Junior</item>
+        <item>Sophomore</item>
+        <item>Freshman</item>
+        <item>Other</item>
+    </string-array>
+    <string-array name="kegSize_array">
+        <item>Half</item>
+        <item>Cornelius</item>
+        <item>Quarter</item>
+        <item>Sixth</item>
+    </string-array>
+</resources>
