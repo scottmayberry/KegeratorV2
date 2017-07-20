@@ -1,5 +1,7 @@
 package com.example.sctma.kegeratorv1;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -9,7 +11,7 @@ import android.view.View;
 import java.util.Timer;
 import java.util.TimerTask;
 
-public class AdminTop extends AppCompatActivity {
+public class AdminTop extends AbstractActivity {
 
     CardView user;
     CardView keg;
@@ -49,8 +51,22 @@ public class AdminTop extends AppCompatActivity {
     }
 
     @Override
+    public void setmMessageReceiver() {
+        mMessageReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                // Get extra data included in the Intent
+                String message = intent.getStringExtra("key");
+                //do something with string
+            }
+        };
+    }
+
+    @Override
     protected void onResume() {
         super.onResume();
         Util.mContext = getApplicationContext();
+        Util.writeToBluetooth(this, R.string.STANDBY_STATE);
+
     }
 }

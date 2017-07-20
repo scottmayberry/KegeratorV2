@@ -1,5 +1,7 @@
 package com.example.sctma.kegeratorv1;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.BitmapFactory;
@@ -28,7 +30,7 @@ import static com.example.sctma.kegeratorv1.Util.IMAGE_SELECTION_REQUEST;
 import static com.example.sctma.kegeratorv1.Util.kegInfo;
 import static com.example.sctma.kegeratorv1.Util.ref;
 
-public class EditKegActivity extends AppCompatActivity {
+public class EditKegActivity extends AbstractActivity {
 
     Spinner kegSize;
     private int kegPos;
@@ -75,9 +77,22 @@ public class EditKegActivity extends AppCompatActivity {
     }
 
     @Override
+    public void setmMessageReceiver() {
+        mMessageReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                // Get extra data included in the Intent
+                String message = intent.getStringExtra("key");
+                //do something with string
+            }
+        };
+    }
+
+    @Override
     protected void onResume() {
         super.onResume();
         Util.mContext = getApplicationContext();
+        Util.writeToBluetooth(this, R.string.STANDBY_STATE);
     }
 
     public void getImageSelection(View v)

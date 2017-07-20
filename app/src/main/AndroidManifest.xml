@@ -4,7 +4,7 @@
     <uses-permission android:name="android.permission.BLUETOOTH"/>
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN"/>
     <uses-permission android:name="android.permission.INTERNET"/>
-    
+
     
 
     <application
@@ -57,6 +57,7 @@
         <activity android:name=".ImageSelectionActivity"
             android:parentActivityName=".EditKegActivity"
             android:screenOrientation="landscape"></activity>
+        <service android:name=".BluetoothDataService"></service>
     </application>
 
 </manifest>

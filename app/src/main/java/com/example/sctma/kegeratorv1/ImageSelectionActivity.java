@@ -1,5 +1,7 @@
 package com.example.sctma.kegeratorv1;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -25,7 +27,7 @@ import java.io.IOException;
 import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 
-public class ImageSelectionActivity extends AppCompatActivity {
+public class ImageSelectionActivity extends AbstractActivity {
     DropboxAPI<AndroidAuthSession> mApi;
     ArrayList<File> filesToDelete;
     File imageFile = null;
@@ -47,6 +49,19 @@ public class ImageSelectionActivity extends AppCompatActivity {
         mApi = new DropboxAPI<AndroidAuthSession>(session);
 
     }
+
+    @Override
+    public void setmMessageReceiver() {
+        mMessageReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                // Get extra data included in the Intent
+                String message = intent.getStringExtra("key");
+                //do something with string
+            }
+        };
+    }
+
     private AndroidAuthSession buildSession() {
         AppKeyPair appKeyPair = new AppKeyPair(getString(R.string.APP_KEY),getString(R.string.APP_SECRET));
         AndroidAuthSession session = new AndroidAuthSession(appKeyPair);
@@ -71,6 +86,7 @@ public class ImageSelectionActivity extends AppCompatActivity {
             Toast.makeText(getApplicationContext(), "Failed Authentication", Toast.LENGTH_SHORT).show();
             finish();
         }
+        Util.writeToBluetooth(this, R.string.STANDBY_STATE);
     }
     public void addImageButtons()
     {

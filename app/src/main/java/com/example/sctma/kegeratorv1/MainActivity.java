@@ -41,6 +41,7 @@ import static com.example.sctma.kegeratorv1.Util.ref;
 import static com.example.sctma.kegeratorv1.Util.rfidHashTable;
 import static com.example.sctma.kegeratorv1.Util.userHashTable;
 import static com.example.sctma.kegeratorv1.Util.writeToBluetooth;
+import static java.lang.Thread.sleep;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -332,7 +333,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onResume(){
         super.onResume();
         Util.mContext = getApplicationContext();
-        writeToBluetooth(this, R.string.BLUETOOTH_STATE_CHANGE_REQUEST, R.string.RFID_STATE);
+        writeToBluetooth(this, R.string.RFID_STATE);
     }//on resume
 
     @Override

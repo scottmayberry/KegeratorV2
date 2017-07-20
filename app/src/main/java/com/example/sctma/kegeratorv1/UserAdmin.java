@@ -1,5 +1,7 @@
 package com.example.sctma.kegeratorv1;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -13,7 +15,7 @@ import android.widget.ScrollView;
 
 import java.util.ArrayList;
 
-public class UserAdmin extends AppCompatActivity {
+public class UserAdmin extends AbstractActivity {
 
     ArrayList<LinearLayout> scrollViews;
     @Override
@@ -53,6 +55,19 @@ public class UserAdmin extends AppCompatActivity {
 
         }//search through hashtable
     }
+
+    @Override
+    public void setmMessageReceiver() {
+        mMessageReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                // Get extra data included in the Intent
+                String message = intent.getStringExtra("key");
+                //do something with string
+            }
+        };
+    }
+
     @Override
     public void onResume()
     {
@@ -81,6 +96,7 @@ public class UserAdmin extends AppCompatActivity {
             });
             scrollViews.get(in).addView(b);
         }//search through hashtable
+        Util.writeToBluetooth(this, R.string.STANDBY_STATE);
     }
     private int getClassAsInt(String cl)
     {

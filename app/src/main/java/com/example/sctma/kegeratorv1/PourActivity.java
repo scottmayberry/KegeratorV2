@@ -1,13 +1,18 @@
 package com.example.sctma.kegeratorv1;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import static com.example.sctma.kegeratorv1.Util.kegInfo;
+import static com.example.sctma.kegeratorv1.Util.writeToBluetooth;
+import static java.lang.Thread.sleep;
 
-public class PourActivity extends AppCompatActivity {
+public class PourActivity extends AbstractActivity {
 
     private int kegPos;
     private double poured;
@@ -16,6 +21,7 @@ public class PourActivity extends AppCompatActivity {
     private TextView costText;
     private TextView beersLeftText;
     private double beersLeft;
+    Thread commThread;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -36,6 +42,19 @@ public class PourActivity extends AppCompatActivity {
         //addToPoured(12.1);
         updatePouredCostAndBeerLeftText();
     }
+
+    @Override
+    public void setmMessageReceiver() {
+        mMessageReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                // Get extra data included in the Intent
+                String message = intent.getStringExtra("key");
+                //do something with string
+            }
+        };
+    }
+
     public void addToPoured(double d)
     {
         poured += d;
@@ -47,6 +66,31 @@ public class PourActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         Util.mContext = getApplicationContext();
+        if(kegPos == 0)
+            Util.writeToBluetooth(this, R.string.A_POUR_STATE);
+        else
+            Util.writeToBluetooth(this, R.string.B_POUR_STATE);
+        commThread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    while(true) {
+                        sleep(1500);
+                        Util.writeToBluetooth(getApplicationContext(), getString(R.string.BLUETOOTH_CONNECTED));
+                    }
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+        commThread.start();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        Util.writeToBluetooth(this, R.string.STANDBY_STATE);
+        commThread.interrupt();
     }
 
     public void updatePouredCostAndBeerLeftText()

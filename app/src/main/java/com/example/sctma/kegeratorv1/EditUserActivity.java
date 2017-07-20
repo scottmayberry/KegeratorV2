@@ -1,6 +1,9 @@
 package com.example.sctma.kegeratorv1;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -12,7 +15,7 @@ import android.widget.Space;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-public class EditUserActivity extends AppCompatActivity {
+public class EditUserActivity extends AbstractActivity {
 
     String key;
     User user;
@@ -86,9 +89,22 @@ public class EditUserActivity extends AppCompatActivity {
     }//on create
 
     @Override
+    public void setmMessageReceiver() {
+        mMessageReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                // Get extra data included in the Intent
+                String message = intent.getStringExtra("key");
+                //do something with string
+            }
+        };
+    }
+
+    @Override
     protected void onResume() {
         super.onResume();
         Util.mContext = getApplicationContext();
+        Util.writeToBluetooth(this, R.string.STANDBY_STATE);
     }
 
     private void startEditing() {

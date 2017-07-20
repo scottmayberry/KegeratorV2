@@ -1,5 +1,7 @@
 package com.example.sctma.kegeratorv1;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -11,7 +13,7 @@ import android.widget.Toast;
 
 import static com.example.sctma.kegeratorv1.Util.kegInfo;
 
-public class BeerAdmin extends AppCompatActivity {
+public class BeerAdmin extends AbstractActivity {
 
     private CardView keg1;
     private CardView keg2;
@@ -48,6 +50,18 @@ public class BeerAdmin extends AppCompatActivity {
         keg2.setOnClickListener(kegLis);
         setKeg1Info();
         setKeg2Info();
+    }
+
+    @Override
+    public void setmMessageReceiver() {
+        mMessageReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                // Get extra data included in the Intent
+                String message = intent.getStringExtra("key");
+                //do something with string
+            }
+        };
     }
 
     public void setKeg1Info() {
@@ -124,6 +138,7 @@ public class BeerAdmin extends AppCompatActivity {
         super.onResume();
         Util.mContext = getApplicationContext();
         setKegImages();
+        Util.writeToBluetooth(this, R.string.STANDBY_STATE);
     }
 
     public void setKegImages()
