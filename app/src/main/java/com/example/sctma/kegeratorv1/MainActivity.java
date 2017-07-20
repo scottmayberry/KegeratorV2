@@ -1,9 +1,13 @@
 package com.example.sctma.kegeratorv1;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -36,6 +40,7 @@ import static com.example.sctma.kegeratorv1.Util.mContext;
 import static com.example.sctma.kegeratorv1.Util.ref;
 import static com.example.sctma.kegeratorv1.Util.rfidHashTable;
 import static com.example.sctma.kegeratorv1.Util.userHashTable;
+import static com.example.sctma.kegeratorv1.Util.writeToBluetooth;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -267,6 +272,12 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+        LocalBroadcastManager.getInstance(getApplicationContext()).registerReceiver(
+                mMessageReceiver, new IntentFilter("intentKey"));
+        if(!Util.isBound) {
+            startService(new Intent(this, BluetoothDataService.class));
+            Util.isBound = true;
+        }//Util isBound
 
         updateKegCardInfo(0);
         updateKegCardInfo(1);
@@ -277,6 +288,15 @@ public class MainActivity extends AppCompatActivity {
         ref.child("Kegs").addChildEventListener(kegListeners);
 
     }
+    private BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            // Get extra data included in the Intent
+            String message = intent.getStringExtra("key");
+            //do something with string
+        }
+    };
+
     public void setKegImages()
     {
         File file;
@@ -312,6 +332,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onResume(){
         super.onResume();
         Util.mContext = getApplicationContext();
+        writeToBluetooth(this, R.string.BLUETOOTH_STATE_CHANGE_REQUEST, R.string.RFID_STATE);
     }//on resume
 
     @Override

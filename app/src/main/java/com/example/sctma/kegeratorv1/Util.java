@@ -1,6 +1,7 @@
 package com.example.sctma.kegeratorv1;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 
 import com.google.firebase.database.DatabaseReference;
@@ -19,6 +20,8 @@ public class Util {
     public static final int CONTACT_INFO_REQUEST = 4;
     public static final int IMAGE_SELECTION_REQUEST = 5;
 
+    public static boolean isBound = false;
+
     public static Bitmap imageBitmaps[] = {null, null};
 
 
@@ -29,4 +32,17 @@ public class Util {
     static KegInfo kegInfo[] = new KegInfo[2];
 
     static Context mContext;
+    static void writeToBluetooth(Context context, String info)
+    {
+        Intent intent = new Intent(context, BluetoothDataService.class);
+        intent.putExtra("WRITE", info);
+        context.startService(intent);
+    }
+    static void writeToBluetooth(Context context, int info)
+    {
+        Intent intent = new Intent(context, BluetoothDataService.class);
+        intent.putExtra("WRITE", context.getString(info));
+        context.startService(intent);
+    }
+
 }

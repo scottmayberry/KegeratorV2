@@ -17,4 +17,10 @@
         <item>Quarter</item>
         <item>Sixth</item>
     </string-array>
+    <string name="BLUETOOTH_STATE_CHANGE_REQUEST">BLUETOOTH_STATE_CHANGE_REQUEST</string>
+    <string name="BLUETOOTH_STATE_CHANGE_COMPLETE">BLUETOOTH_STATE_CHANGE_COMPLETE</string>
+    <string name="STANDBY_STATE">STANDYBY_STATE</string>
+    <string name="RFID_STATE">RFID_STATE</string>
+    <string name="A_POUR_STATE">A_POUR_STATE</string>
+    <string name="B_POUR_STATE">B_POUR_STATE</string>
 </resources>
