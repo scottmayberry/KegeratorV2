@@ -126,6 +126,26 @@ public class EditUserActivity extends AbstractActivity {
         rfid.setEnabled(bo);
     }//set fields enabled
 
+    public void rfidButtonPressed(View v)
+    {
+        Intent intent = new Intent(this, RFIDScannerActivity.class);
+        startActivityForResult(intent, 0);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+        if(resultCode == 5)
+        {
+
+        }
+        else
+        {
+
+        }
+        super.onActivityResult(requestCode, resultCode, data);
+    }
+
     private void setEditButtonsVisible(boolean bo) {
         if (bo)//true
         {

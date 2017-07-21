@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.sctma.kegeratorv1">
-    <uses-permission android:name="android.permission.BLUETOOTH"/>
-    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN"/>
-    <uses-permission android:name="android.permission.INTERNET"/>
 
-    
+    <uses-permission android:name="android.permission.BLUETOOTH" />
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
+    <uses-permission android:name="android.permission.INTERNET" />
 
     <application
         android:allowBackup="true"
@@ -16,8 +15,8 @@
         android:theme="@style/AppTheme">
         <activity
             android:name=".MainActivity"
-            android:uiOptions="splitActionBarWhenNarrow"
-            android:screenOrientation="landscape">
+            android:screenOrientation="landscape"
+            android:uiOptions="splitActionBarWhenNarrow">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -27,37 +26,41 @@
         <activity
             android:name=".ContactInfo"
             android:parentActivityName=".MainActivity"
-            android:screenOrientation="landscape"/>
+            android:screenOrientation="landscape" />
         <activity
             android:name=".AdminTop"
             android:parentActivityName=".MainActivity"
-            android:screenOrientation="landscape"/>
+            android:screenOrientation="landscape" />
         <activity
             android:name=".UserAdmin"
             android:parentActivityName=".AdminTop"
-            android:screenOrientation="landscape"/>
+            android:screenOrientation="landscape" />
         <activity
             android:name=".EditUserActivity"
             android:parentActivityName=".UserAdmin"
-            android:windowSoftInputMode="stateHidden"
-            android:screenOrientation="landscape"/>
+            android:screenOrientation="landscape"
+            android:windowSoftInputMode="stateHidden" />
         <activity
             android:name=".PourActivity"
             android:parentActivityName=".MainActivity"
-            android:screenOrientation="landscape"/>
+            android:screenOrientation="landscape" />
         <activity
             android:name=".BeerAdmin"
             android:parentActivityName=".AdminTop"
-            android:screenOrientation="landscape"/>
+            android:screenOrientation="landscape" />
         <activity
             android:name=".EditKegActivity"
-            android:windowSoftInputMode="stateHidden"
             android:parentActivityName=".BeerAdmin"
-            android:screenOrientation="landscape"/>
-        <activity android:name=".ImageSelectionActivity"
+            android:screenOrientation="landscape"
+            android:windowSoftInputMode="stateHidden" />
+        <activity
+            android:name=".ImageSelectionActivity"
             android:parentActivityName=".EditKegActivity"
-            android:screenOrientation="landscape"></activity>
-        <service android:name=".BluetoothDataService"></service>
+            android:screenOrientation="landscape" />
+
+        <service android:name=".BluetoothDataService" />
+
+        <activity android:name=".RFIDScannerActivity"></activity>
     </application>
 
 </manifest>

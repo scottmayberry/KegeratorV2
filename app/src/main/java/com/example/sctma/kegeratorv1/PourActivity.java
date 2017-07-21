@@ -36,8 +36,10 @@ public class PourActivity extends AbstractActivity {
         beersLeftText.setText("" + roundNumber(beersLeft));
         ((ImageView)findViewById(R.id.chosenKeg1Image)).setImageBitmap(Util.imageBitmaps[kegPos]);
         ((TextView)(findViewById(R.id.chosenStyle1Text))).setText(kegInfo[kegPos].getStyle());
-        ((TextView)(findViewById(R.id.pricePerBeerText))).setText(kegInfo[kegPos].getRoundedPricePerBeer());
-        ((TextView)(findViewById(R.id.pricePerOunceText))).setText(kegInfo[kegPos].getRoundedPricePerOunce());
+        ((TextView)(findViewById(R.id.pricePerBeerText))).setText(kegInfo[kegPos]
+                .getRoundedPricePerBeer());
+        ((TextView)(findViewById(R.id.pricePerOunceText))).setText(kegInfo[kegPos]
+                .getRoundedPricePerOunce());
         ((TextView)(findViewById(R.id.chosenName1Text))).setText(kegInfo[kegPos].getName());
         //addToPoured(12.1);
         updatePouredCostAndBeerLeftText();
