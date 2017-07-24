@@ -28,6 +28,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.io.File;
 import java.util.HashMap;
@@ -57,8 +58,8 @@ public class MainActivity extends AppCompatActivity {
                     (String) dataSnapshot.child("rfid").getValue(),
                     (String) dataSnapshot.child("username").getValue(),
                     (String) dataSnapshot.child("classification").getValue(),
-                    (String) dataSnapshot.child("email").getValue());
-            ref.child("Balances").child((String) dataSnapshot.child("username").getValue()).child("CurrentBalance").addChildEventListener(balanceListener);
+                    (String) dataSnapshot.child("email").getValue(),
+                    (boolean) dataSnapshot.child("admin").getValue());
             userHashTable.put(key, user);
         }
 
@@ -70,12 +71,12 @@ public class MainActivity extends AppCompatActivity {
             user.setUsername((String) dataSnapshot.child("username").getValue());
             user.setClassification((String) dataSnapshot.child("classification").getValue());
             user.setEmail((String) dataSnapshot.child("email").getValue());
+            user.setAdmin((boolean) dataSnapshot.child("admin").getValue());
         }
 
         @Override
         public void onChildRemoved(DataSnapshot dataSnapshot) {
-            String username = userHashTable.remove(dataSnapshot.getKey()).getUsername();
-            ref.child("Balances").child(username).child("CurrentBalance").removeEventListener(balanceListener);
+            userHashTable.remove(dataSnapshot.getKey());
         }
 
         @Override
@@ -119,16 +120,17 @@ public class MainActivity extends AppCompatActivity {
 
         }
     };
+
+
     ChildEventListener balanceListener = new ChildEventListener() {
         @Override
         public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-            balanceHashTable.put(dataSnapshot.getKey(), new Balance(getDoubleFromDatabase(dataSnapshot.child("balance").getValue())));
+            balanceHashTable.put(dataSnapshot.getKey(), new Balance(getDoubleFromDatabase(dataSnapshot.child("Balance").child("balance").getValue())));
         }
 
         @Override
         public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-            Balance b = balanceHashTable.get(dataSnapshot.getKey());
-            b.setBalance(getDoubleFromDatabase(dataSnapshot.child("balance").getValue()));
+            balanceHashTable.put(dataSnapshot.getKey(), new Balance(getDoubleFromDatabase(dataSnapshot.child("Balance").child("balance").getValue())));
         }
 
         @Override
@@ -146,6 +148,7 @@ public class MainActivity extends AppCompatActivity {
 
         }
     };
+
     ChildEventListener kegListeners = new ChildEventListener() {
         @Override
         public void onChildAdded(DataSnapshot dataSnapshot, String s) {
@@ -235,8 +238,6 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        //dropbox key
-        //S6arYx_aWSAAAAAAAAAACu_x5KEdlFY7rgeMD2C78HZ5NxTp56vcbPUt22BWbvMU
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
@@ -247,7 +248,7 @@ public class MainActivity extends AppCompatActivity {
         mContext = getApplicationContext();
 
         setKegImages();
-        // We create a new AuthSession so that we can use the Dropbox API.
+
         //cardviews
         keg1 = (CardView)(findViewById(R.id.keg1CardView));
         keg2 = (CardView)(findViewById(R.id.keg2CardView));
@@ -287,6 +288,7 @@ public class MainActivity extends AppCompatActivity {
         ref.child("Users").addChildEventListener(userListener);
         ref.child("RFID").addChildEventListener(rfidListener);
         ref.child("Kegs").addChildEventListener(kegListeners);
+        ref.child("Balances").addChildEventListener(balanceListener);
 
     }
     private BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {

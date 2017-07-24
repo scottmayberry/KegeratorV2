@@ -123,7 +123,9 @@ public class UserAdmin extends AbstractActivity {
         Intent intent;
         switch (item.getItemId()) {
             case R.id.add_new_user:
-
+                intent = new Intent(this, EditUserActivity.class);
+                intent.putExtra("ADDUSER", true);
+                startActivity(intent);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

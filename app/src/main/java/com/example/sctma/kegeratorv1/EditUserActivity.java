@@ -10,10 +10,14 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Space;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import java.util.Date;
 
 public class EditUserActivity extends AbstractActivity {
 
@@ -23,6 +27,9 @@ public class EditUserActivity extends AbstractActivity {
     EditText nameText;
     EditText emailText;
     EditText venmoText;
+    EditText balanceText;
+    TextView rfidText;
+    CheckBox adminBox;
     Spinner classification;
     Button rfid;
 
@@ -37,13 +44,16 @@ public class EditUserActivity extends AbstractActivity {
     TextView emailError;
     TextView venmoError;
 
+    boolean addBrother;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit_user);
 
-        key = getIntent().getStringExtra("KEY");
-        user = Util.userHashTable.get(key);
+
+        addBrother = getIntent().getBooleanExtra("ADDUSER", false);
+
 
         //setting spinner resources
         classification = (Spinner) findViewById(R.id.spinner);
@@ -52,9 +62,28 @@ public class EditUserActivity extends AbstractActivity {
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         classification.setAdapter(adapter);
 
+        if(!addBrother) {
+            key = getIntent().getStringExtra("KEY");
+            user = Util.userHashTable.get(key);
+
+        }
+        else {
+            user = new User();
+            user.setClassification(classification.getItemAtPosition(0).toString());
+            user.setAdmin(false);
+            key = "NEWUSER";
+        }
+
+
         nameText = (EditText) findViewById(R.id.nameEditText);
         emailText = (EditText) findViewById(R.id.emailEditText);
         venmoText = (EditText) findViewById(R.id.venmoEditText);
+        adminBox = (CheckBox) findViewById(R.id.adminCheckBox);
+        adminBox.setChecked(false);
+        balanceText = (EditText) findViewById(R.id.balanceEditText);
+        rfidText = (TextView) findViewById(R.id.rfidText);
+
+
 
         nameError = (TextView) findViewById(R.id.nameErrorText);
         emailError = (TextView) findViewById(R.id.emailErrorText);
@@ -72,18 +101,21 @@ public class EditUserActivity extends AbstractActivity {
         space1 = (Space) findViewById(R.id.space1);
         space2 = (Space) findViewById(R.id.space2);
 
-        //set all enabled editing
-        setFieldsEnabled(false);
+        adminBox.setChecked(user.isAdmin());
 
-        nameText.setText(user.getName());
-        emailText.setText(user.getEmail());
-        venmoText.setText(user.getUsername());
 
+        removeEditingStuff();
         for (int i = 0; i < classification.getCount(); i++) {
             if (user.getClassification().equals(classification.getItemAtPosition(i).toString()))
                 classification.setSelection(i);
         }//for loop
         stopEditing();
+        if(addBrother)
+        {
+            balanceText.setVisibility(View.GONE);
+            findViewById(R.id.balanceTitleText).setVisibility(View.GONE);
+            startEditing();
+        }
 
 
     }//on create
@@ -124,6 +156,8 @@ public class EditUserActivity extends AbstractActivity {
         venmoText.setEnabled(bo);
         classification.setEnabled(bo);
         rfid.setEnabled(bo);
+        balanceText.setEnabled(bo);
+        adminBox.setEnabled(bo);
     }//set fields enabled
 
     public void rfidButtonPressed(View v)
@@ -137,7 +171,7 @@ public class EditUserActivity extends AbstractActivity {
 
         if(resultCode == 5)
         {
-
+            rfidText.setText(data.getStringExtra("RFID"));
         }
         else
         {
@@ -186,14 +220,27 @@ public class EditUserActivity extends AbstractActivity {
     }
 
     public void cancelButtonClicked(View v) {
+        if(addBrother) {
+            finish();
+            return;
+        }
+        removeEditingStuff();
+    }
+    public void removeEditingStuff()
+    {
         nameText.setText(user.getName());
         emailText.setText(user.getEmail());
         venmoText.setText(user.getUsername());
+        rfidText.setText(user.getRfid());
+        if(!addBrother)
+            balanceText.setText("" + Util.balanceHashTable.get(user.getUsername()).getBalance());
+
         nameError.setVisibility(View.GONE);
         emailError.setVisibility(View.GONE);
         venmoError.setVisibility(View.GONE);
         stopEditing();
     }
+
 
     public void submitButtonClicked(View v)
     {
@@ -216,18 +263,47 @@ public class EditUserActivity extends AbstractActivity {
             return;
         }
         venmoError.setVisibility(View.GONE);
-        User nU = new User(nameText.getText().toString(), rfid.getTag().toString(), venmoText.getText().toString(), classification.getSelectedItem().toString(), emailText.getText().toString());
-        if(!nU.getUsername().equals(user.getUsername().toString()))
+        if(rfidText.getText().toString().equals("rfid") || rfidText.getText().toString().equals(""))
         {
-            for(String key : Util.userHashTable.keySet())
+            Toast.makeText(this, "Please scan an rfid card", Toast.LENGTH_SHORT);
+            return;
+        }
+        if(!addBrother)
+        {
+            if(balanceText.getText().toString().equals("") || balanceText.getText().toString() == null)
             {
-                if(!key.equals(this.key) && Util.userHashTable.get(key).getUsername().equals(user.getUsername())) {
-                    venmoError.setVisibility(View.VISIBLE);
-                    return;
-                }//username exists
-            }//check through the hashmap
-        }//check for username equalling
-        Util.ref.child("Users").child(key).setValue(nU);
+                balanceText.setText("" + 0);
+                Toast.makeText(this, "Balance was null", Toast.LENGTH_SHORT);
+                return;
+            }
+        }
+        User nU = new User(nameText.getText().toString(), rfidText.getText().toString(), venmoText.getText().toString(), classification.getSelectedItem().toString(), emailText.getText().toString(), adminBox.isChecked());
+        for(String key : Util.userHashTable.keySet())
+        {
+            if(!key.equals(this.key) && Util.userHashTable.get(key).getUsername().equals(nU.getUsername())) {
+                venmoError.setVisibility(View.VISIBLE);
+                Toast.makeText(this, "Same venmo as " + Util.userHashTable.get(key).getName() + ". Cannot double up.", Toast.LENGTH_SHORT);
+                return;
+            }//username exists
+            if(!key.equals(this.key) && Util.userHashTable.get(key).getRfid().equals(nU.getRfid()))
+            {
+                Toast.makeText(this, "Same rfid as " + Util.userHashTable.get(key).getName() + ". Cannot double up.", Toast.LENGTH_SHORT);
+                return;
+            }
+        }//check through the hashmap
+        if(!addBrother) {
+            double ba = Double.parseDouble(balanceText.getText().toString());
+            Util.ref.child("Users").child(key).setValue(nU);
+            String usn = user.getUsername();
+            ChargeItem chargeItem = new ChargeItem(ba - Util.balanceHashTable.get(user.getUsername()).getBalance(), "Admin adjustment", Util.df.format(new Date()));
+            String temp = Util.ref.child("Balances").child(user.getUsername()).child("Charge").push().getKey();
+            Util.ref.child("Balances").child(user.getUsername()).child("Charge").child(temp).setValue(chargeItem);
+        }
+        else
+        {
+            key = Util.ref.child("Users").push().getKey();
+            Util.ref.child("Users").child(key).setValue(nU);
+        }
         finish();
 
     }

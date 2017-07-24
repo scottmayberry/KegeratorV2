@@ -7,6 +7,8 @@ import android.graphics.Bitmap;
 import com.google.firebase.database.DatabaseReference;
 
 import java.io.File;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Hashtable;
 
 /**
@@ -19,6 +21,7 @@ public class Util {
     public static final int USER_INFO_REQUEST = 3;
     public static final int CONTACT_INFO_REQUEST = 4;
     public static final int IMAGE_SELECTION_REQUEST = 5;
+    public static final DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
     public static boolean isBound = false;
 

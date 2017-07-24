@@ -50,7 +50,7 @@ public class RFIDScannerActivity extends AbstractActivity {
                 scanAgainView.setVisibility(View.VISIBLE);
                 break;
             case SCAN:
-                checkView.setVisibility(View.VISIBLE);
+                checkView.setVisibility(View.GONE);
                 scanView.setVisibility(View.VISIBLE);
                 errorView.setVisibility(View.GONE);
                 scanAgainView.setVisibility(View.GONE);

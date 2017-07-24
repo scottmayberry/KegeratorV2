@@ -10,6 +10,7 @@ public class User {
     private String username;
     private String classification;
     private String email;
+    private boolean admin;
 
     public User() {
     }
@@ -20,6 +21,23 @@ public class User {
         this.username = username;
         this.classification = classification;
         this.email = email;
+        admin = false;
+    }
+    public User(String name, String rfid, String username, String classification, String email, boolean admin) {
+        this.name = name;
+        this.rfid = rfid;
+        this.username = username;
+        this.classification = classification;
+        this.email = email;
+        this.admin = admin;
+    }
+
+    public boolean isAdmin() {
+        return admin;
+    }
+
+    public void setAdmin(boolean admin) {
+        this.admin = admin;
     }
 
     public String getEmail() {

@@ -136,6 +136,14 @@ public class BeerAdmin extends AbstractActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        if (!kegInfo[0].isActive())
+            setKeg1Visibility(true);
+        else
+            setKeg1Visibility(false);
+        if (!kegInfo[1].isActive())
+            setKeg2Visibility(true);
+        else
+            setKeg2Visibility(false);
         Util.mContext = getApplicationContext();
         setKegImages();
         Util.writeToBluetooth(this, R.string.STANDBY_STATE);

@@ -153,7 +153,7 @@ public class EditKegActivity extends AbstractActivity {
     {
         AlertDialog.Builder adb = new AlertDialog.Builder(this);
         adb.setIcon(android.R.drawable.ic_dialog_alert);
-        adb.setTitle("Reset the beer count? Current beer count is " + kegInfo[kegPos].getRoundedBeersLeft() + ". Resetting the beer count will set the beer count at " + KegInfo.kegSizeToBeers(kegInfo[kegPos].getKegSize()) + ".");
+        adb.setTitle("Finishing of this keg will tap the keg out. Keg will become inactive.");
         adb.setPositiveButton("Finish Keg Off", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
                 ref.child("Kegs").child("" + kegPos).child("active").setValue(false);
