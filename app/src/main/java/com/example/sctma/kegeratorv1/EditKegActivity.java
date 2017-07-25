@@ -10,10 +10,12 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.SeekBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -42,6 +44,10 @@ public class EditKegActivity extends AbstractActivity {
     private EditText purchaserName;
     private TextView errorText;
     private File imageFile = null;
+    private TextView beersLeftText;
+    private SeekBar beersLeftSeekbar;
+    private double beersLeft;
+    private boolean beersLeftChanged;
 
 
     @Override
@@ -64,16 +70,71 @@ public class EditKegActivity extends AbstractActivity {
         savings = (EditText) findViewById(R.id.savingsEditText);
         purchaserName = (EditText) findViewById(R.id.purchaserNameEditText);
         errorText = (TextView) findViewById(R.id.errorText);
+        beersLeftText = (TextView) findViewById(R.id.beersLeftText);
+        beersLeftSeekbar = (SeekBar) findViewById(R.id.beersLeftSeekbar);
+
 
         fillOutKegInfo();
+
+        kegSize.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                updateMaxBeerLeftSeekbar((int)KegInfo.kegSizeToBeers(parent.getItemAtPosition(position).toString()));
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+
+
+        beersLeftSeekbar.setMax((int)KegInfo.kegSizeToBeers(kegSize.getSelectedItem().toString()));
+        beersLeft = kegInfo[kegPos].getBeersLeft();
+        beersLeftSeekbar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                updateBeersLeft(progress);
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
+            }
+        });
+
+
         setEditFieldsEnabled(false);
 
+
+
+        beersLeftChanged = false;
         if(!kegInfo[kegPos].isActive())
         {
             editMode(true);
         }//keg info
         else
             editMode(false);
+    }
+    public void updateBeersLeft(int progress)
+    {
+        beersLeftText.setText("" + progress);
+        beersLeftChanged = true;
+    }
+    public void updateMaxBeerLeftSeekbar(int siz)
+    {
+
+        if(beersLeftSeekbar.getProgress() > siz)
+        {
+            beersLeftChanged = true;
+            beersLeftSeekbar.setProgress(siz);
+        }
+        beersLeftSeekbar.setMax(siz);
     }
 
     @Override
@@ -132,8 +193,12 @@ public class EditKegActivity extends AbstractActivity {
     }
     public void fillOutKegInfo()
     {
-        if(kegInfo[kegPos] == null)
+        if(kegInfo[kegPos] == null || !kegInfo[kegPos].isActive()) {
+            beersLeftSeekbar.setMax((int)KegInfo.kegSizeToBeers(kegSize.getSelectedItem().toString()));
+            beersLeftSeekbar.setProgress(beersLeftSeekbar.getMax());
+            updateBeersLeft(beersLeftSeekbar.getMax());
             return;
+        }
         if(kegInfo[kegPos].isActive())
         {
             nameEdit.setText(kegInfo[kegPos].getName());
@@ -143,6 +208,8 @@ public class EditKegActivity extends AbstractActivity {
             purchaserName.setText(kegInfo[kegPos].getPurchaser());
             savings.setText("" + kegInfo[kegPos].getSavings());
             kegSize.setSelection(KegInfo.kegSizeToSpinnerPosition(kegInfo[kegPos].getKegSize()));
+            beersLeftSeekbar.setProgress((int)kegInfo[kegPos].getBeersLeft());
+            updateBeersLeft((int)kegInfo[kegPos].getBeersLeft());
         }
     }//fill out keg info
     public void onEditPressed(View v)
@@ -174,7 +241,7 @@ public class EditKegActivity extends AbstractActivity {
                 || purchaserName.getText().toString().equals("") || feeToPurchaser.getText().toString().equals("")
                 || savings.getText().toString().equals("") || ((TextView)findViewById(R.id.imageNameText)).getText().toString().equals("none"))
         {
-            errorText.setVisibility(View.VISIBLE);
+            Toast.makeText(getApplicationContext(), "Fields Incomplete", Toast.LENGTH_LONG).show();
             return;
         }
         else {
@@ -196,11 +263,15 @@ public class EditKegActivity extends AbstractActivity {
             ref.child("Kegs").child("" + kegPos).child("Spent").setValue(nK.getSpent());
             ref.child("Kegs").child("" + kegPos).child("Style").setValue(nK.getStyle());
             ref.child("Kegs").child("" + kegPos).child("active").setValue(nK.isActive());
+            if(beersLeftChanged){
+                nK.setBeersLeft(beersLeftSeekbar.getProgress());
+                ref.child("Kegs").child("" + kegPos).child("beersLeft").setValue(nK.getBeersLeft());
+            }
             //ref.child("Kegs").child("" + 2).setValue(nK);
             finalizeImage();
 
             kegInfo[kegPos] = nK;
-            if(kegInfo[kegPos].isActive())
+            /*if(kegInfo[kegPos].isActive())
             {
                 AlertDialog.Builder adb = new AlertDialog.Builder(this);
                 adb.setIcon(android.R.drawable.ic_dialog_alert);
@@ -217,8 +288,8 @@ public class EditKegActivity extends AbstractActivity {
                         finish();
                     } });
                 adb.show();
-            }
-
+            }*/
+            finish();
         }
     }
 
@@ -241,6 +312,7 @@ public class EditKegActivity extends AbstractActivity {
         savings.setEnabled(b);
         purchaserName.setEnabled(b);
         kegSize.setEnabled(b);
+        beersLeftSeekbar.setEnabled(b);
     }
     private void finalizeImage()
     {

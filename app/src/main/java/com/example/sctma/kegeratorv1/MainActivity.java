@@ -162,7 +162,8 @@ public class MainActivity extends AppCompatActivity {
                     getDoubleFromDatabase(dataSnapshot.child("Fee").getValue()),
                     getDoubleFromDatabase(dataSnapshot.child("Saving").getValue()),
                     (String)dataSnapshot.child("Purchaser").getValue(),
-                    (boolean)dataSnapshot.child("active").getValue());
+                    (boolean)dataSnapshot.child("active").getValue(),
+                    getDoubleFromDatabase(dataSnapshot.child("beersLeft").getValue()));
             updateKegCardInfo(i);
         }
 
@@ -173,6 +174,7 @@ public class MainActivity extends AppCompatActivity {
                 return;
             if(kegInfo[i] == null)
                 return;
+            kegInfo[i].setBeersLeft(getDoubleFromDatabase(dataSnapshot.child("beersLeft").getValue()));
             kegInfo[i].setName((String)dataSnapshot.child("Name").getValue());
             kegInfo[i].setKegSize((String)dataSnapshot.child("KegSize").getValue());
             kegInfo[i].setStyle((String)dataSnapshot.child("Style").getValue());

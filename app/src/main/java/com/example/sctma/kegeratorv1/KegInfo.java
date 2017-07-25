@@ -38,6 +38,20 @@ public class KegInfo {
         setPrices();
         beersLeft = kegSizeToBeers(kegSize);
     }
+    public KegInfo(String name, String kegSize, String style, double spent, double fee, double savings, String purchaser, boolean active, double beersLeft) {
+        this.name = name;
+        this.kegSize = kegSize;
+        this.style = style;
+        this.spent = spent;
+        this.fee = fee;
+        this.savings = savings;
+        this.purchaser = purchaser;
+        this.active = active;
+        uRange = 0.9*kegSizeToBeers(kegSize);
+        lRange = 0.1*kegSizeToBeers(kegSize);
+        setPrices();
+        this.beersLeft = beersLeft;
+    }
     public KegInfo(String name, String kegSize, String style, double spent, double fee, double savings, String purchaser, boolean active, double uRangeAdjuster, double lRangeAdjuster) {
         this.name = name;
         this.kegSize = kegSize;
