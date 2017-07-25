@@ -8,7 +8,7 @@
 
     <LinearLayout
         android:id="@+id/linearLayout2"
-        android:layout_width="930dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
         android:layout_marginEnd="16dp"
@@ -34,7 +34,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="Name"
-                android:textSize="32sp" />
+                android:textSize="24sp" />
 
             <EditText
                 android:id="@+id/kegNameEditText"
@@ -61,7 +61,7 @@
                 android:layout_gravity="center_vertical"
                 android:layout_weight="1"
                 android:text="Image"
-                android:textSize="32sp" />
+                android:textSize="24sp" />
 
             <TextView
                 android:id="@+id/imageNameText"
@@ -92,7 +92,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1.72"
                 android:text="Style"
-                android:textSize="32sp" />
+                android:textSize="24sp" />
 
             <EditText
                 android:id="@+id/kegStyleEditText"
@@ -116,7 +116,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="Keg Size"
-                android:textSize="32sp" />
+                android:textSize="24sp" />
 
             <Spinner
                 android:id="@+id/kegSizeSpinner"
@@ -132,12 +132,32 @@
             android:orientation="horizontal">
 
             <TextView
+                android:id="@+id/costRangeTitleText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Cost Range"
+                android:textSize="24sp" />
+
+            <SeekBar
+                android:id="@+id/seekBar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal">
+
+            <TextView
                 android:id="@+id/originalCostTitleText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="Cost of Keg"
-                android:textSize="32sp" />
+                android:textSize="24sp" />
 
             <EditText
                 android:id="@+id/originalCostEditText"
@@ -162,7 +182,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="Fee to Purchaser"
-                android:textSize="32sp" />
+                android:textSize="24sp" />
 
             <EditText
                 android:id="@+id/feeEditText"
@@ -187,7 +207,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="Savings"
-                android:textSize="32sp" />
+                android:textSize="24sp" />
 
             <EditText
                 android:id="@+id/savingsEditText"
@@ -213,7 +233,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="Name of Purchaser"
-                android:textSize="32sp" />
+                android:textSize="24sp" />
 
             <EditText
                 android:id="@+id/purchaserNameEditText"

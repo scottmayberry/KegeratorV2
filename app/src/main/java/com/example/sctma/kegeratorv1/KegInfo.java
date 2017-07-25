@@ -15,6 +15,8 @@ public class KegInfo {
     private double beersLeft;
     private String purchaser;
     private boolean active;
+    private double uRange;
+    private double lRange;
 
     private double pricePerBeer;
     private double pricePerOunce;
@@ -31,6 +33,22 @@ public class KegInfo {
         this.savings = savings;
         this.purchaser = purchaser;
         this.active = active;
+        uRange = 0.9*kegSizeToBeers(kegSize);
+        lRange = 0.1*kegSizeToBeers(kegSize);
+        setPrices();
+        beersLeft = kegSizeToBeers(kegSize);
+    }
+    public KegInfo(String name, String kegSize, String style, double spent, double fee, double savings, String purchaser, boolean active, double uRangeAdjuster, double lRangeAdjuster) {
+        this.name = name;
+        this.kegSize = kegSize;
+        this.style = style;
+        this.spent = spent;
+        this.fee = fee;
+        this.savings = savings;
+        this.purchaser = purchaser;
+        this.active = active;
+        uRange = uRangeAdjuster*kegSizeToBeers(kegSize);
+        lRange = lRangeAdjuster*kegSizeToBeers(kegSize);
         setPrices();
         beersLeft = kegSizeToBeers(kegSize);
     }
@@ -90,9 +108,15 @@ public class KegInfo {
 
     private void setPrices() {
         this.totalPrice = this.spent + this.fee + this.savings;
-        double kegSizeD = kegSizeToBeers(kegSize);
+        double kegSizeD = uRange - lRange;
         pricePerBeer = totalPrice/kegSizeD;
         pricePerOunce = pricePerBeer/12.0;
+    }
+    public boolean beerWithinRange()
+    {
+        if(beersLeft < uRange && beersLeft > lRange)
+            return true;
+        return false;
     }
     public static double kegSizeToBeers(String kegSize)
     {
