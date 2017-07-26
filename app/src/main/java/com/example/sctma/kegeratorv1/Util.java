@@ -23,6 +23,7 @@ public class Util {
     public static final int IMAGE_SELECTION_REQUEST = 5;
     public static final DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
+
     public static boolean isBound = false;
 
     public static Bitmap imageBitmaps[] = {null, null};

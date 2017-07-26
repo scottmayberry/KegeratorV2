@@ -1,11 +1,13 @@
 package com.example.sctma.kegeratorv1;
 
+import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.BitmapFactory;
 import android.media.Image;
+import android.os.Handler;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -46,8 +48,8 @@ public class EditKegActivity extends AbstractActivity {
     private File imageFile = null;
     private TextView beersLeftText;
     private SeekBar beersLeftSeekbar;
-    private double beersLeft;
     private boolean beersLeftChanged;
+    private boolean imageCheck;
 
 
     @Override
@@ -73,7 +75,6 @@ public class EditKegActivity extends AbstractActivity {
         beersLeftText = (TextView) findViewById(R.id.beersLeftText);
         beersLeftSeekbar = (SeekBar) findViewById(R.id.beersLeftSeekbar);
 
-
         fillOutKegInfo();
 
         kegSize.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -90,7 +91,6 @@ public class EditKegActivity extends AbstractActivity {
 
 
         beersLeftSeekbar.setMax((int)KegInfo.kegSizeToBeers(kegSize.getSelectedItem().toString()));
-        beersLeft = kegInfo[kegPos].getBeersLeft();
         beersLeftSeekbar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
@@ -110,7 +110,18 @@ public class EditKegActivity extends AbstractActivity {
 
 
         setEditFieldsEnabled(false);
+        imageCheck = false;
 
+        if(Util.imageBitmaps[kegPos] != null)
+        {
+            imageFile = new File(getFilesDir(),"image" + kegPos);
+            if(imageFile.exists())
+            {
+                ((TextView)(findViewById(R.id.imageNameText))).setText(imageFile.getName());
+            }
+            else
+                imageFile = null;
+        }
 
 
         beersLeftChanged = false;
@@ -164,12 +175,13 @@ public class EditKegActivity extends AbstractActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
         if(resultCode == 3)
         {
+            imageCheck = true;
             imageFile = (File)data.getSerializableExtra("FILE");
             ((TextView)(findViewById(R.id.imageNameText))).setText(imageFile.getName());
         }
+        super.onActivityResult(requestCode, resultCode, data);
     }
 
     public void editMode(boolean b)
@@ -268,7 +280,8 @@ public class EditKegActivity extends AbstractActivity {
                 ref.child("Kegs").child("" + kegPos).child("beersLeft").setValue(nK.getBeersLeft());
             }
             //ref.child("Kegs").child("" + 2).setValue(nK);
-            finalizeImage();
+            if(imageCheck)
+                finalizeImage();
 
             kegInfo[kegPos] = nK;
             /*if(kegInfo[kegPos].isActive())
@@ -289,10 +302,26 @@ public class EditKegActivity extends AbstractActivity {
                     } });
                 adb.show();
             }*/
-            finish();
+
+            new Handler().postDelayed(new Runnable() {
+
+                @Override
+                public void run() {
+                    finish();
+                }
+            }, 1000) ;
+            Toast.makeText(this, "Complete", Toast.LENGTH_SHORT).show();
+            setEditFieldsEnabled(false);
+            setAllButtonsDisabled();
         }
     }
-
+    public void setAllButtonsDisabled()
+    {
+        ((Button) findViewById(R.id.submitKegButton)).setEnabled(false);
+        ((Button) findViewById(R.id.cancelKegButton)).setEnabled(false);
+        ((Button) findViewById(R.id.editKegButton)).setEnabled(false);
+        ((Button) findViewById(R.id.finishKegButton)).setEnabled(false);
+    }
     public void onCancelPressed(View v)
     {
         if(kegInfo[kegPos].isActive()) {

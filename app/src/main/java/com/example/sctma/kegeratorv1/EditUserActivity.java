@@ -265,7 +265,7 @@ public class EditUserActivity extends AbstractActivity {
         venmoError.setVisibility(View.GONE);
         if(rfidText.getText().toString().equals("rfid") || rfidText.getText().toString().equals(""))
         {
-            Toast.makeText(this, "Please scan an rfid card", Toast.LENGTH_SHORT);
+            Toast.makeText(this, "Please scan an rfid card", Toast.LENGTH_SHORT).show();
             return;
         }
         if(!addBrother)
@@ -273,7 +273,7 @@ public class EditUserActivity extends AbstractActivity {
             if(balanceText.getText().toString().equals("") || balanceText.getText().toString() == null)
             {
                 balanceText.setText("" + 0);
-                Toast.makeText(this, "Balance was null", Toast.LENGTH_SHORT);
+                Toast.makeText(this, "Balance was null", Toast.LENGTH_SHORT).show();
                 return;
             }
         }
@@ -282,12 +282,12 @@ public class EditUserActivity extends AbstractActivity {
         {
             if(!key.equals(this.key) && Util.userHashTable.get(key).getUsername().equals(nU.getUsername())) {
                 venmoError.setVisibility(View.VISIBLE);
-                Toast.makeText(this, "Same venmo as " + Util.userHashTable.get(key).getName() + ". Cannot double up.", Toast.LENGTH_SHORT);
+                Toast.makeText(this, "Same venmo as " + Util.userHashTable.get(key).getName() + ". Cannot double up.", Toast.LENGTH_SHORT).show();
                 return;
             }//username exists
             if(!key.equals(this.key) && Util.userHashTable.get(key).getRfid().equals(nU.getRfid()))
             {
-                Toast.makeText(this, "Same rfid as " + Util.userHashTable.get(key).getName() + ". Cannot double up.", Toast.LENGTH_SHORT);
+                Toast.makeText(this, "Same rfid as " + Util.userHashTable.get(key).getName() + ". Cannot double up.", Toast.LENGTH_SHORT).show();
                 return;
             }
         }//check through the hashmap

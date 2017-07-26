@@ -8,6 +8,7 @@ import android.graphics.BitmapFactory;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -32,6 +33,7 @@ public class ImageSelectionActivity extends AbstractActivity {
     ArrayList<File> filesToDelete;
     File imageFile = null;
     int kegPos;
+    Thread thread;
 
     private final int imageSi = 220;
     @Override
@@ -76,12 +78,13 @@ public class ImageSelectionActivity extends AbstractActivity {
         String bo = session.getOAuth2AccessToken();
 
         try {
-            new Thread(new Runnable() {
+            thread = new Thread(new Runnable() {
                 public void run() {
                     // a potentially  time consuming task
                     addImageButtons();
                 }
-            }).start();
+            });
+            thread.start();
         } catch (IllegalStateException e) {
             Toast.makeText(getApplicationContext(), "Failed Authentication", Toast.LENGTH_SHORT).show();
             finish();
@@ -177,5 +180,25 @@ public class ImageSelectionActivity extends AbstractActivity {
             finish();
         }//on click
     };
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item)
+    {
+        goBackPressed();
+        return true;
+    }
+    public void goBackPressed()
+    {
+        if(thread != null)
+            thread.interrupt();
+        setResult(0);
+        finish();
+    }
+
+    @Override
+    public void onBackPressed() {
+        goBackPressed();
+    }
+
 
 }
