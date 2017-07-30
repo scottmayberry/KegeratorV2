@@ -50,6 +50,9 @@ public class MainActivity extends AppCompatActivity {
     CardView keg1;
     CardView keg2;
 
+    boolean cardReadStart;
+    StringBuilder cardString;
+
     ChildEventListener userListener = new ChildEventListener() {
         @Override
         public void onChildAdded(DataSnapshot dataSnapshot, String s) {
@@ -255,6 +258,9 @@ public class MainActivity extends AppCompatActivity {
         keg1 = (CardView)(findViewById(R.id.keg1CardView));
         keg2 = (CardView)(findViewById(R.id.keg2CardView));
 
+        cardReadStart = false;
+        cardString = new StringBuilder();
+
 
         //click listeners for the buttons
         keg1.setOnClickListener(new View.OnClickListener() {
@@ -298,8 +304,31 @@ public class MainActivity extends AppCompatActivity {
         public void onReceive(Context context, Intent intent) {
             // Get extra data included in the Intent
             String message = intent.getStringExtra("key");
-            //do something with string
-        }
+            if(message.contains("*")) {
+                cardReadStart = true;
+                cardString = new StringBuilder();
+            }
+            if(cardReadStart)
+            {
+                cardString.append(message);
+                if(message.contains("#"))
+                {
+                    for(int i = 0; i < cardString.length();i++)
+                        if(cardString.charAt(i) >= '0' && cardString.charAt(i) <= '9' ) {
+                            cardString.delete(0, i);
+                            break;
+                        }
+                    for(int i = cardString.length()-1; i >= 0; i--)
+                        if(cardString.charAt(i) >= '0' && cardString.charAt(i) <= '9' ) {
+                            cardString.delete(i+1, cardString.length());
+                            break;
+                        }
+                    cardReadStart = false;
+
+                    //do something with the read ID
+                }
+            }
+        }//on Receive
     };
 
     public void setKegImages()
