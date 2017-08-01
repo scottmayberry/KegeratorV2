@@ -25,8 +25,6 @@ public abstract class AbstractActivity extends AppCompatActivity {
             Toast.makeText(this, "RECEIVER NOT INSTANTIATE", Toast.LENGTH_SHORT);
             finish();
         }
-        LocalBroadcastManager.getInstance(getApplicationContext()).registerReceiver(
-                mMessageReceiver, new IntentFilter("intentKey"));
     }
 
     @Override
@@ -34,6 +32,20 @@ public abstract class AbstractActivity extends AppCompatActivity {
         super.onDestroy();
         LocalBroadcastManager.getInstance(getApplicationContext()).unregisterReceiver(mMessageReceiver);
     }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        LocalBroadcastManager.getInstance(getApplicationContext()).unregisterReceiver(mMessageReceiver);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        LocalBroadcastManager.getInstance(getApplicationContext()).registerReceiver(
+                mMessageReceiver, new IntentFilter("intentKey"));
+    }
+
     public abstract void setmMessageReceiver();
 
 }

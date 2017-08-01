@@ -19,6 +19,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.dropbox.client2.DropboxAPI;
 import com.dropbox.client2.android.AndroidAuthSession;
@@ -44,7 +45,7 @@ import static com.example.sctma.kegeratorv1.Util.userHashTable;
 import static com.example.sctma.kegeratorv1.Util.writeToBluetooth;
 import static java.lang.Thread.sleep;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AbstractActivity {
 
 
     CardView keg1;
@@ -62,7 +63,8 @@ public class MainActivity extends AppCompatActivity {
                     (String) dataSnapshot.child("username").getValue(),
                     (String) dataSnapshot.child("classification").getValue(),
                     (String) dataSnapshot.child("email").getValue(),
-                    (boolean) dataSnapshot.child("admin").getValue());
+                    (boolean) dataSnapshot.child("admin").getValue(),
+                    (String) key);
             userHashTable.put(key, user);
         }
 
@@ -75,6 +77,7 @@ public class MainActivity extends AppCompatActivity {
             user.setClassification((String) dataSnapshot.child("classification").getValue());
             user.setEmail((String) dataSnapshot.child("email").getValue());
             user.setAdmin((boolean) dataSnapshot.child("admin").getValue());
+            user.setPushID((String) dataSnapshot.getKey());
         }
 
         @Override
@@ -262,6 +265,7 @@ public class MainActivity extends AppCompatActivity {
         cardString = new StringBuilder();
 
 
+
         //click listeners for the buttons
         keg1.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -299,37 +303,50 @@ public class MainActivity extends AppCompatActivity {
         ref.child("Balances").addChildEventListener(balanceListener);
 
     }
-    private BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            // Get extra data included in the Intent
-            String message = intent.getStringExtra("key");
-            if(message.contains("*")) {
-                cardReadStart = true;
-                cardString = new StringBuilder();
-            }
-            if(cardReadStart)
-            {
-                cardString.append(message);
-                if(message.contains("#"))
-                {
-                    for(int i = 0; i < cardString.length();i++)
-                        if(cardString.charAt(i) >= '0' && cardString.charAt(i) <= '9' ) {
-                            cardString.delete(0, i);
-                            break;
-                        }
-                    for(int i = cardString.length()-1; i >= 0; i--)
-                        if(cardString.charAt(i) >= '0' && cardString.charAt(i) <= '9' ) {
-                            cardString.delete(i+1, cardString.length());
-                            break;
-                        }
-                    cardReadStart = false;
 
-                    //do something with the read ID
+    @Override
+    public void setmMessageReceiver() {
+        mMessageReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                // Get extra data included in the Intent
+                String message = intent.getStringExtra("key");
+                if(message.contains("*")) {
+                    cardReadStart = true;
+                    cardString = new StringBuilder();
                 }
-            }
-        }//on Receive
-    };
+                if(cardReadStart)
+                {
+                    cardString.append(message);
+                    if(message.contains("#"))
+                    {
+                        for(int i = 0; i < cardString.length();i++)
+                            if(cardString.charAt(i) >= '0' && cardString.charAt(i) <= '9' ) {
+                                cardString.delete(0, i);
+                                break;
+                            }
+                        for(int i = cardString.length()-1; i >= 0; i--)
+                            if(cardString.charAt(i) >= '0' && cardString.charAt(i) <= '9' ) {
+                                cardString.delete(i+1, cardString.length());
+                                break;
+                            }
+                        cardReadStart = false;
+
+                        //do something with the read ID
+                        if(rfidHashTable.containsKey(cardString.toString()))
+                        {
+                            String tempID = rfidHashTable.get(cardString.toString()).getPushID();
+                            User u = userHashTable.get(tempID);
+                            Toast.makeText(getApplicationContext(), "Welcome " + u.getName() , Toast.LENGTH_SHORT).show();
+                        }
+                        else
+                            Toast.makeText(getApplicationContext(), "RFID not recognized", Toast.LENGTH_SHORT).show();
+                    }
+                }
+            }//on Receive
+        };
+    }
+
 
     public void setKegImages()
     {
@@ -366,6 +383,9 @@ public class MainActivity extends AppCompatActivity {
     protected void onResume(){
         super.onResume();
         Util.mContext = getApplicationContext();
+        //String ri = "" + ((int)(Math.random()*1000000));
+        //User nu = new User("" + ((int)(Math.random()*1000000)),"" + ((int)(Math.random()*1000000)) , "" + ((int)(Math.random()*1000000)), "Senior", "asdf@mit.edu", true, ri);
+        //Util.ref.child("Users").child(ri).setValue(nu);
         writeToBluetooth(this, R.string.RFID_STATE);
     }//on resume
 

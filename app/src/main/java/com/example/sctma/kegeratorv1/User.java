@@ -11,6 +11,7 @@ public class User {
     private String classification;
     private String email;
     private boolean admin;
+    private String pushID;
 
     public User() {
     }
@@ -22,6 +23,7 @@ public class User {
         this.classification = classification;
         this.email = email;
         admin = false;
+        this.pushID = "";
     }
     public User(String name, String rfid, String username, String classification, String email, boolean admin) {
         this.name = name;
@@ -30,6 +32,24 @@ public class User {
         this.classification = classification;
         this.email = email;
         this.admin = admin;
+        this.pushID = "";
+    }
+    public User(String name, String rfid, String username, String classification, String email, boolean admin, String pushID) {
+        this.name = name;
+        this.rfid = rfid;
+        this.username = username;
+        this.classification = classification;
+        this.email = email;
+        this.admin = admin;
+        this.pushID = pushID;
+    }
+
+    public String getPushID() {
+        return pushID;
+    }
+
+    public void setPushID(String pushID) {
+        this.pushID = pushID;
     }
 
     public boolean isAdmin() {

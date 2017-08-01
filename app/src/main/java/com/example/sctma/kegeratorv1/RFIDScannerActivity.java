@@ -8,11 +8,15 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.w3c.dom.Text;
 
 import java.util.Timer;
 import java.util.TimerTask;
+
+import static com.example.sctma.kegeratorv1.Util.rfidHashTable;
+import static com.example.sctma.kegeratorv1.Util.userHashTable;
 
 public class RFIDScannerActivity extends AbstractActivity {
 
@@ -27,10 +31,14 @@ public class RFIDScannerActivity extends AbstractActivity {
     private String rfid;
     private boolean checkID;
 
+    boolean cardReadStart;
+    StringBuilder cardString;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_rfidscanner);
+        cardReadStart = false;
         checkID = getIntent().getBooleanExtra("CHECKID", false);
         checkView = (ImageView)findViewById(R.id.checkmarkImageView);
         scanView = (TextView)findViewById(R.id.scanRequestText);
@@ -91,21 +99,43 @@ public class RFIDScannerActivity extends AbstractActivity {
                 // Get extra data included in the Intent
                 String message = intent.getStringExtra("key");
                 //do something with string
-                if(checkID)//checkID against database
-                {
-
+                if(message.contains("*")) {
+                    cardReadStart = true;
+                    cardString = new StringBuilder();
                 }
-                else
+                if(cardReadStart)
                 {
-                    if(message.substring(0,2).equals("$%"))
+                    cardString.append(message);
+                    if(message.contains("#"))
                     {
-                        rfid = message.substring(2, message.length()-2);
-                        updateUI(ACCEPTED);
-                    }
-                    else
-                        updateUI(ERROR);
-                }//grab scan without checking
+                        for(int i = 0; i < cardString.length();i++)
+                            if(cardString.charAt(i) >= '0' && cardString.charAt(i) <= '9' ) {
+                                cardString.delete(0, i);
+                                break;
+                            }
+                        for(int i = cardString.length()-1; i >= 0; i--)
+                            if(cardString.charAt(i) >= '0' && cardString.charAt(i) <= '9' ) {
+                                cardString.delete(i+1, cardString.length());
+                                break;
+                            }
+                        cardReadStart = false;
 
+                        //do something with the read ID
+                        if(rfidHashTable.containsKey(cardString.toString()))
+                        {
+                            String tempID = rfidHashTable.get(cardString.toString()).getPushID();
+                            User u = userHashTable.get(tempID);
+                            Toast.makeText(getApplicationContext(), u.getName() + " already uses this card." , Toast.LENGTH_SHORT).show();
+                            updateUI(ERROR);
+                            return;
+                        }
+                        else
+                        {
+                            rfid = cardString.toString();
+                            updateUI(ACCEPTED);
+                        }//the card is not reco
+                    }
+                }
             }
         };
     }

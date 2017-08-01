@@ -293,6 +293,7 @@ public class EditUserActivity extends AbstractActivity {
         }//check through the hashmap
         if(!addBrother) {
             double ba = Double.parseDouble(balanceText.getText().toString());
+            nU.setPushID(key);
             Util.ref.child("Users").child(key).setValue(nU);
             String usn = user.getUsername();
             ChargeItem chargeItem = new ChargeItem(ba - Util.balanceHashTable.get(user.getUsername()).getBalance(), "Admin adjustment", Util.df.format(new Date()));
@@ -302,6 +303,7 @@ public class EditUserActivity extends AbstractActivity {
         else
         {
             key = Util.ref.child("Users").push().getKey();
+            nU.setPushID(key);
             Util.ref.child("Users").child(key).setValue(nU);
         }
         finish();
