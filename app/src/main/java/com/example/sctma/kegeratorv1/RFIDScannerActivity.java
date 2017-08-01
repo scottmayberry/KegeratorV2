@@ -88,6 +88,7 @@ public class RFIDScannerActivity extends AbstractActivity {
     protected void onResume() {
         super.onResume();
         Util.writeToBluetooth(this, R.string.RFID_STATE);
+
     }
 
 

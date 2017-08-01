@@ -109,7 +109,7 @@
         android:id="@+id/loginLinearLayout"
         android:layout_width="0dp"
         android:layout_height="50dp"
-        android:layout_marginBottom="1dp"
+        android:layout_marginBottom="0dp"
         android:background="@android:color/holo_red_light"
         android:orientation="horizontal"
         app:layout_constraintBottom_toBottomOf="parent"

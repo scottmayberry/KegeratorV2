@@ -35,7 +35,12 @@ public class Util {
     static Hashtable<String, Balance> balanceHashTable;
     static KegInfo kegInfo[] = new KegInfo[2];
 
+    static User currentUser;
+    static Balance currentBalance;
+
+
     static Context mContext;
+
     static void writeToBluetooth(Context context, String info)
     {
         Intent intent = new Intent(context, BluetoothDataService.class);

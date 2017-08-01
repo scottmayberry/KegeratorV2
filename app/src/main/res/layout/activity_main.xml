@@ -10,12 +10,22 @@
         android:id="@+id/loginLinearLayout"
         android:layout_width="0dp"
         android:layout_height="50dp"
-        android:layout_marginBottom="1dp"
+        android:layout_marginBottom="0dp"
         android:background="@android:color/holo_red_light"
         android:orientation="horizontal"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent">
+
+        <TextView
+            android:id="@+id/loginTextNotification"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical|center_horizontal"
+            android:layout_weight="1"
+            android:gravity="center_vertical|center_horizontal"
+            android:text="Please login by tapping ID"
+            android:textSize="30sp" />
 
         <TextView
             android:id="@+id/loginNameText"
@@ -28,7 +38,17 @@
             android:textSize="30sp" />
 
         <TextView
-            android:id="@+id/loginAccountText"
+            android:id="@+id/balanceTitleText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical|center_horizontal"
+            android:layout_weight="1"
+            android:gravity="right|center_vertical|center_horizontal"
+            android:text="Balance:"
+            android:textSize="20sp" />
+
+        <TextView
+            android:id="@+id/loginBalanceText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical|center_horizontal"
@@ -37,12 +57,18 @@
             android:text="TextView"
             android:textSize="30sp" />
 
+        <Space
+            android:id="@+id/logOnSpace"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1" />
+
         <Button
             android:id="@+id/logoutButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Button" />
+            android:text="Logout" />
 
     </LinearLayout>
 

@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -17,7 +18,10 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.Space;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -34,6 +38,8 @@ import com.google.firebase.database.ValueEventListener;
 import java.io.File;
 import java.util.HashMap;
 import java.util.Hashtable;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import static com.example.sctma.kegeratorv1.Util.ADMIN_REQUEST;
 import static com.example.sctma.kegeratorv1.Util.balanceHashTable;
@@ -50,6 +56,8 @@ public class MainActivity extends AbstractActivity {
 
     CardView keg1;
     CardView keg2;
+
+    Timer timer;
 
     boolean cardReadStart;
     StringBuilder cardString;
@@ -101,14 +109,16 @@ public class MainActivity extends AbstractActivity {
             String key = dataSnapshot.getKey();
             rfidHashTable.put(key,
                     new RFID((String) dataSnapshot.child("rfid").getValue(),
-                            (String) dataSnapshot.child("PushID").getValue()));
+                            (String) dataSnapshot.child("pushID").getValue(),
+                            (String) dataSnapshot.child("username").getValue()));
         }
 
         @Override
         public void onChildChanged(DataSnapshot dataSnapshot, String s) {
             RFID user = rfidHashTable.get(dataSnapshot.getKey());
             user.setRFID((String)dataSnapshot.child("rfid").getValue());
-            user.setPushID((String) dataSnapshot.child("PushID").getValue());
+            user.setPushID((String) dataSnapshot.child("pushID").getValue());
+            user.setUsername((String) dataSnapshot.child("username").getValue());
         }
 
         @Override
@@ -264,6 +274,8 @@ public class MainActivity extends AbstractActivity {
         cardReadStart = false;
         cardString = new StringBuilder();
 
+        logOut();
+
 
 
         //click listeners for the buttons
@@ -271,9 +283,18 @@ public class MainActivity extends AbstractActivity {
             @Override
             public void onClick(View v) {
                 //on click listener to keg 1 screen
-                Intent intent = new Intent(getApplicationContext(), PourActivity.class);
+                String ra = "12:201:182:203";
+                RFID rad = rfidHashTable.get(ra);
+                User u = userHashTable.get(rad.getPushID());
+                Balance b = balanceHashTable.get(u.getUsername());
+                if(Util.currentUser == null)
+                    logOn(u,b);
+                else
+                    logOut();
+
+                /*Intent intent = new Intent(getApplicationContext(), PourActivity.class);
                 intent.putExtra("KegPos", 0);
-                startActivity(intent);
+                startActivity(intent);*/
             }
         });
         keg2.setOnClickListener(new View.OnClickListener(){
@@ -281,6 +302,15 @@ public class MainActivity extends AbstractActivity {
             @Override
             public void onClick(View v) {
                 //on click listener to keg 2 screen
+                if(Util.currentUser == null) {
+                    Toast.makeText(getApplicationContext(), "Please log in first", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                if(Util.currentBalance.getBalance() < 3) {
+                    Toast.makeText(getApplicationContext(), "Balance must be greater than $3 to begin pouring", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
                 Intent intent = new Intent(getApplicationContext(), PourActivity.class);
                 intent.putExtra("KegPos", 1);
                 startActivity(intent);
@@ -304,6 +334,50 @@ public class MainActivity extends AbstractActivity {
 
     }
 
+    private void logOn(User u, Balance b)
+    {
+        Util.currentUser = u;
+        Util.currentBalance = b;
+        Toast.makeText(getApplicationContext(), "Welcome " + u.getName(), Toast.LENGTH_SHORT).show();
+        logOnView(true);
+
+    }
+    private void logOut()
+    {
+        if(Util.currentUser != null)
+            Toast.makeText(getApplicationContext(), Util.currentUser.getName() + " logged out", Toast.LENGTH_SHORT).show();
+        Util.currentBalance = null;
+        Util.currentUser = null;
+        logOnView(false);
+    }
+    private void logOnView(boolean b)
+    {
+        if(b)
+        {
+            ((TextView)findViewById(R.id.loginTextNotification)).setVisibility(View.GONE);
+            ((TextView)findViewById(R.id.loginNameText)).setVisibility(View.VISIBLE);
+            ((TextView)findViewById(R.id.loginNameText)).setText(Util.currentUser.getName());
+            ((TextView)findViewById(R.id.loginBalanceText)).setVisibility(View.VISIBLE);
+            ((TextView)findViewById(R.id.loginBalanceText)).setText("" + Util.currentBalance.getBalance());
+            ((TextView)findViewById(R.id.balanceTitleText)).setVisibility(View.VISIBLE);
+            ((Button)findViewById(R.id.logoutButton)).setVisibility(View.VISIBLE);
+            ((Space)findViewById(R.id.logOnSpace)).setVisibility(View.VISIBLE);
+            ((LinearLayout)findViewById(R.id.loginLinearLayout)).setVisibility(View.VISIBLE);
+            ((LinearLayout)findViewById(R.id.loginLinearLayout)).setBackgroundColor(Color.GREEN);
+        }
+        else
+        {
+            ((TextView)findViewById(R.id.loginTextNotification)).setVisibility(View.VISIBLE);
+            ((TextView)findViewById(R.id.loginNameText)).setVisibility(View.GONE);
+            ((TextView)findViewById(R.id.loginBalanceText)).setVisibility(View.GONE);
+            ((TextView)findViewById(R.id.balanceTitleText)).setVisibility(View.GONE);
+            ((Space)findViewById(R.id.logOnSpace)).setVisibility(View.GONE);
+            ((Button)findViewById(R.id.logoutButton)).setVisibility(View.GONE);
+            ((LinearLayout)findViewById(R.id.loginLinearLayout)).setVisibility(View.VISIBLE);
+            ((LinearLayout)findViewById(R.id.loginLinearLayout)).setBackgroundColor(Color.RED);
+        }
+
+    }
     @Override
     public void setmMessageReceiver() {
         mMessageReceiver = new BroadcastReceiver() {
@@ -383,9 +457,6 @@ public class MainActivity extends AbstractActivity {
     protected void onResume(){
         super.onResume();
         Util.mContext = getApplicationContext();
-        //String ri = "" + ((int)(Math.random()*1000000));
-        //User nu = new User("" + ((int)(Math.random()*1000000)),"" + ((int)(Math.random()*1000000)) , "" + ((int)(Math.random()*1000000)), "Senior", "asdf@mit.edu", true, ri);
-        //Util.ref.child("Users").child(ri).setValue(nu);
         writeToBluetooth(this, R.string.RFID_STATE);
     }//on resume
 
