@@ -296,7 +296,7 @@ public class EditUserActivity extends AbstractActivity {
             nU.setPushID(key);
             Util.ref.child("Users").child(key).setValue(nU);
             String usn = user.getUsername();
-            ChargeItem chargeItem = new ChargeItem(ba - Util.balanceHashTable.get(user.getUsername()).getBalance(), "Admin adjustment", Util.df.format(new Date()));
+            ChargeItem chargeItem = new ChargeItem(ba - Util.balanceHashTable.get(user.getUsername()).getBalance(), "Admin adjustment", new Date().getTime(), usn);
             String temp = Util.ref.child("Balances").child(user.getUsername()).child("Charge").push().getKey();
             Util.ref.child("Balances").child(user.getUsername()).child("Charge").child(temp).setValue(chargeItem);
         }

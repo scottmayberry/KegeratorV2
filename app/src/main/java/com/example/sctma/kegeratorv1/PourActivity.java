@@ -3,11 +3,15 @@ package com.example.sctma.kegeratorv1;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import static com.example.sctma.kegeratorv1.Util.currentBalance;
+import static com.example.sctma.kegeratorv1.Util.currentUser;
 import static com.example.sctma.kegeratorv1.Util.kegInfo;
 import static com.example.sctma.kegeratorv1.Util.writeToBluetooth;
 import static java.lang.Thread.sleep;
@@ -22,6 +26,8 @@ public class PourActivity extends AbstractActivity {
     private TextView beersLeftText;
     private double beersLeft;
     Thread commThread;
+    double balance;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -29,11 +35,13 @@ public class PourActivity extends AbstractActivity {
         kegPos = getIntent().getIntExtra("KegPos",0);
         poured = 0;
         cost = 0.0;
+        balance = currentBalance.getBalance();
         pouredText = (TextView)findViewById(R.id.pouredText);
         costText = (TextView)findViewById(R.id.costText);
         beersLeftText = (TextView)findViewById(R.id.beersLeftText);
         beersLeft = kegInfo[kegPos].getBeersLeft();
         beersLeftText.setText("" + roundNumber(beersLeft));
+        logOnUser();
         ((ImageView)findViewById(R.id.chosenKeg1Image)).setImageBitmap(Util.imageBitmaps[kegPos]);
         ((TextView)(findViewById(R.id.chosenStyle1Text))).setText(kegInfo[kegPos].getStyle());
         ((TextView)(findViewById(R.id.pricePerBeerText))).setText(kegInfo[kegPos]
@@ -41,8 +49,22 @@ public class PourActivity extends AbstractActivity {
         ((TextView)(findViewById(R.id.pricePerOunceText))).setText(kegInfo[kegPos]
                 .getRoundedPricePerOunce());
         ((TextView)(findViewById(R.id.chosenName1Text))).setText(kegInfo[kegPos].getName());
+
         //addToPoured(12.1);
         updatePouredCostAndBeerLeftText();
+    }
+
+    @Override
+    public void onBackPressed() {
+        //super.onBackPressed();
+
+    }
+
+    public void logOnUser()
+    {
+        ((LinearLayout)findViewById(R.id.loginLinearLayout)).setBackgroundColor(Color.GREEN);
+        ((TextView)findViewById(R.id.nameText)).setText(currentUser.getName());
+        ((TextView)findViewById(R.id.balanceText)).setText("" + balance);
     }
 
     @Override

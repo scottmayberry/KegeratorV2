@@ -38,6 +38,8 @@ public class Util {
     static User currentUser;
     static Balance currentBalance;
 
+    static String savedBluetoothAddress;
+
 
     static Context mContext;
 

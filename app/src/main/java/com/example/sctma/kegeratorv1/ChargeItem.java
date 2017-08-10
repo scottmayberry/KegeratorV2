@@ -8,20 +8,18 @@ package com.example.sctma.kegeratorv1;
 public class ChargeItem {
     private double amount;
     private String info;
-    private String date;
+    private long time;
+    private String username;
 
     public ChargeItem()
     {
     }
 
-    public ChargeItem(double amount, String info) {
+    public ChargeItem(double amount, String info, Long time, String username) {
         this.amount = amount;
         this.info = info;
-    }
-    public ChargeItem(double amount, String info, String date) {
-        this.amount = amount;
-        this.info = info;
-        this.date = date;
+        this.time = time;
+        this.username = username;
     }
 
     public double getAmount() {
@@ -40,11 +38,11 @@ public class ChargeItem {
         this.info = info;
     }
 
-    public String getDate() {
-        return date;
+    public Long getTime() {
+        return time;
     }
 
-    public void setDate(String date) {
-        this.date = date;
+    public void setTime(Long time) {
+        this.time = time;
     }
 }

@@ -60,7 +60,12 @@
 
         <service android:name=".BluetoothDataService" />
 
-        <activity android:name=".RFIDScannerActivity"></activity>
+        <activity android:name=".RFIDScannerActivity" />
+        <activity
+            android:name=".UserHistoryActivity"
+            android:parentActivityName=".MainActivity" />
+        <activity android:name=".EditBluetoothActivity"
+            android:parentActivityName=".AdminTop"></activity>
     </application>
 
 </manifest>

@@ -4,6 +4,10 @@
     <string name="APP_KEY">qe3m30w66xl0db5</string>
     <string name="APP_SECRET">soqszd1m57py280</string>
     <string name="APP_ACCESS_TOKEN">S6arYx_aWSAAAAAAAAAAGPxRPYj8hOzi57qtt0y2SJRWuyBkdCCIaN9fC8wwXVyg</string>
+    <string name="SQUARE_APP_ID">sq0idp-pTNV2RT9Mv_ZHuJdwkklKQ</string>
+    <string name="SQUARE_PERSONAL_ACCESS_TOKEN">sq0atp-Fucdg0zDeuvx7FH1DQfMPg</string>
+    <string name="SQUARE_APP_SECRET">sq0csp-z1ECFsNa3vOR92EAlLdSLfvCE_XAroGMhfD5J7msUGQ</string>
+    <string name="SQUARE_WEBHOOK_SIGNATURE_KEY">mWnXiXwFMKdWU170dmWbOw</string>
     <string-array name="classification_array">
         <item>Senior</item>
         <item>Junior</item>
@@ -24,4 +28,5 @@
     <string name="A_POUR_STATE">#;A_POUR_STATE;#</string>
     <string name="B_POUR_STATE">#;B_POUR_STATE;#</string>
     <string name="BLUETOOTH_CONNECTED">#;CONNECTED;#</string>
+
 </resources>

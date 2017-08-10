@@ -11,6 +11,7 @@ import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
+import android.widget.Toast;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -30,7 +31,7 @@ public class BluetoothDataService extends Service {
     // SPP UUID service - this should work for most devices
     private static final UUID BTMODULEUUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
     // String for MAC address
-    private static final String MAC_ADDRESS = "00:14:03:06:27:45";
+    //private static String MAC_ADDRESS = "00:14:03:06:27:45";
 
     private StringBuilder recDataString = new StringBuilder();
 
@@ -109,8 +110,8 @@ public class BluetoothDataService extends Service {
             if (btAdapter.isEnabled()) {
                 Log.d("DEBUG BT", "BT ENABLED! BT ADDRESS : " + btAdapter.getAddress() + " , BT NAME : " + btAdapter.getName());
                 try {
-                    BluetoothDevice device = btAdapter.getRemoteDevice(MAC_ADDRESS);
-                    Log.d("DEBUG BT", "ATTEMPTING TO CONNECT TO REMOTE DEVICE : " + MAC_ADDRESS);
+                    BluetoothDevice device = btAdapter.getRemoteDevice(Util.savedBluetoothAddress);
+                    Log.d("DEBUG BT", "ATTEMPTING TO CONNECT TO REMOTE DEVICE : " + Util.savedBluetoothAddress);
                     mConnectingThread = new ConnectingThread(device);
                     mConnectingThread.start();
                 } catch (IllegalArgumentException e) {
@@ -133,7 +134,7 @@ public class BluetoothDataService extends Service {
             Log.d("DEBUG BT", "IN CONNECTING THREAD");
             mmDevice = device;
             BluetoothSocket temp = null;
-            Log.d("DEBUG BT", "MAC ADDRESS : " + MAC_ADDRESS);
+            Log.d("DEBUG BT", "MAC ADDRESS : " + Util.savedBluetoothAddress);
             Log.d("DEBUG BT", "BT UUID : " + BTMODULEUUID);
             try {
                 temp = mmDevice.createRfcommSocketToServiceRecord(BTMODULEUUID);
@@ -167,6 +168,7 @@ public class BluetoothDataService extends Service {
                     Log.d("DEBUG BT", "SOCKET CONNECTION FAILED : " + e.toString());
                     Log.d("BT SERVICE", "SOCKET CONNECTION FAILED, STOPPING SERVICE");
                     mmSocket.close();
+                    //Toast.makeText(getApplicationContext(), "Closing bluetooth socket", Toast.LENGTH_SHORT).show();
                     stopSelf();
                 } catch (IOException e2) {
                     Log.d("DEBUG BT", "SOCKET CLOSING FAILED :" + e2.toString());

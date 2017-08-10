@@ -117,7 +117,7 @@
         app:layout_constraintRight_toRightOf="parent">
 
         <TextView
-            android:id="@+id/textView4"
+            android:id="@+id/nameText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical|center_horizontal"
@@ -127,7 +127,7 @@
             android:textSize="30sp" />
 
         <TextView
-            android:id="@+id/textView3"
+            android:id="@+id/balanceText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical|center_horizontal"
@@ -137,11 +137,11 @@
             android:textSize="30sp" />
 
         <Button
-            android:id="@+id/button3"
+            android:id="@+id/finishButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Button" />
+            android:text="Finish" />
 
     </LinearLayout>
 

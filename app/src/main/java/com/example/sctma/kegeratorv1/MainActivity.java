@@ -35,7 +35,13 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Timer;
@@ -43,10 +49,13 @@ import java.util.TimerTask;
 
 import static com.example.sctma.kegeratorv1.Util.ADMIN_REQUEST;
 import static com.example.sctma.kegeratorv1.Util.balanceHashTable;
+import static com.example.sctma.kegeratorv1.Util.currentBalance;
+import static com.example.sctma.kegeratorv1.Util.currentUser;
 import static com.example.sctma.kegeratorv1.Util.kegInfo;
 import static com.example.sctma.kegeratorv1.Util.mContext;
 import static com.example.sctma.kegeratorv1.Util.ref;
 import static com.example.sctma.kegeratorv1.Util.rfidHashTable;
+import static com.example.sctma.kegeratorv1.Util.savedBluetoothAddress;
 import static com.example.sctma.kegeratorv1.Util.userHashTable;
 import static com.example.sctma.kegeratorv1.Util.writeToBluetooth;
 import static java.lang.Thread.sleep;
@@ -265,6 +274,8 @@ public class MainActivity extends AbstractActivity {
 
         mContext = getApplicationContext();
 
+        getBluetoothMacAddress();
+
         setKegImages();
 
         //cardviews
@@ -333,6 +344,49 @@ public class MainActivity extends AbstractActivity {
         ref.child("Balances").addChildEventListener(balanceListener);
 
     }
+    private void getBluetoothMacAddress() {
+        if(savedBluetoothAddress != null)
+            return;
+        String filename = "BLUETOOTH_MAC_ADDRESS.txt";
+        File file = new File(this.getFilesDir(), filename);
+        try {
+            if (!file.exists()) {
+                FileOutputStream outputStream;
+                outputStream = openFileOutput(filename, Context.MODE_PRIVATE);
+                outputStream.write(("00:14:03:06:27:45").getBytes());
+                outputStream.close();
+                savedBluetoothAddress = "00:14:03:06:27:45";
+            } else {
+                try {
+                    InputStream inputStream = this.openFileInput(filename);
+
+                    if (inputStream != null) {
+                        InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
+                        BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+                        String receiveString = "";
+                        StringBuilder stringBuilder = new StringBuilder();
+
+                        while ((receiveString = bufferedReader.readLine()) != null) {
+                            stringBuilder.append(receiveString);
+                        }
+
+                        inputStream.close();
+                        savedBluetoothAddress = stringBuilder.toString();
+                        Toast.makeText(this, "MAC ADDRESS " + savedBluetoothAddress, Toast.LENGTH_LONG).show();
+                    }
+                } catch (FileNotFoundException e) {
+                    Log.e("login activity", "File not found: " + e.toString());
+                } catch (IOException e) {
+                    Log.e("login activity", "Can not read file: " + e.toString());
+                }
+            }
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
 
     private void logOn(User u, Balance b)
     {
@@ -340,6 +394,7 @@ public class MainActivity extends AbstractActivity {
         Util.currentBalance = b;
         Toast.makeText(getApplicationContext(), "Welcome " + u.getName(), Toast.LENGTH_SHORT).show();
         logOnView(true);
+        invalidateOptionsMenu();
 
     }
     private void logOut()
@@ -349,6 +404,11 @@ public class MainActivity extends AbstractActivity {
         Util.currentBalance = null;
         Util.currentUser = null;
         logOnView(false);
+        invalidateOptionsMenu();
+    }
+    public void clickLogoutButton(View v)
+    {
+        logOut();
     }
     private void logOnView(boolean b)
     {
@@ -412,6 +472,13 @@ public class MainActivity extends AbstractActivity {
                             String tempID = rfidHashTable.get(cardString.toString()).getPushID();
                             User u = userHashTable.get(tempID);
                             Toast.makeText(getApplicationContext(), "Welcome " + u.getName() , Toast.LENGTH_SHORT).show();
+                            if(Util.currentUser == null)
+                                logOn(u, balanceHashTable.get(u.getUsername()));
+                            else
+                            {
+                                logOut();
+                                logOn(u, balanceHashTable.get(u.getUsername()));
+                            }
                         }
                         else
                             Toast.makeText(getApplicationContext(), "RFID not recognized", Toast.LENGTH_SHORT).show();
@@ -464,6 +531,18 @@ public class MainActivity extends AbstractActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.my_menu, menu);
+        if(currentUser == null) {
+            menu.findItem(R.id.menuAdmin).setEnabled(false);
+            menu.findItem(R.id.menuUserHistory).setVisible(false);
+        }
+        else {
+            menu.findItem(R.id.menuUserHistory).setVisible(true);
+            if (currentUser.isAdmin())
+                menu.findItem(R.id.menuAdmin).setEnabled(true);
+            else
+                menu.findItem(R.id.menuAdmin).setEnabled(false);
+        }
+
         return true;
     }//on create options menu
 
@@ -481,7 +560,8 @@ public class MainActivity extends AbstractActivity {
                 startActivity(intent);
                 return true;
             case R.id.menuUserHistory:
-
+                intent = new Intent(this, UserHistoryActivity.class);
+                startActivity(intent);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
