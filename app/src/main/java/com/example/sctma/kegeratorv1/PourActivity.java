@@ -10,9 +10,12 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import java.util.Date;
+
 import static com.example.sctma.kegeratorv1.Util.currentBalance;
 import static com.example.sctma.kegeratorv1.Util.currentUser;
 import static com.example.sctma.kegeratorv1.Util.kegInfo;
+import static com.example.sctma.kegeratorv1.Util.ref;
 import static com.example.sctma.kegeratorv1.Util.writeToBluetooth;
 import static java.lang.Thread.sleep;
 
@@ -27,6 +30,7 @@ public class PourActivity extends AbstractActivity {
     private double beersLeft;
     Thread commThread;
     double balance;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,9 +79,14 @@ public class PourActivity extends AbstractActivity {
                 // Get extra data included in the Intent
                 String message = intent.getStringExtra("key");
                 //do something with string
+
+                //addToPoured();
+
+                //update user info and GUI
             }
         };
     }
+
 
     public void addToPoured(double d)
     {
@@ -115,6 +124,10 @@ public class PourActivity extends AbstractActivity {
         super.onPause();
         Util.writeToBluetooth(this, R.string.STANDBY_STATE);
         commThread.interrupt();
+        ChargeItem chargeItem = new ChargeItem(cost, "Bought " + roundNumber(poured) + " ounces of " + kegInfo[kegPos].getName(), (new Date()).getTime(), currentUser.getUsername());
+        String key1 = ref.child("Balances").child(currentUser.getUsername()).child("Charge").push().getKey();
+        ref.child("Balances").child(currentUser.getUsername()).child("Charge").child(key1).setValue(chargeItem);
+        finish();
     }
 
     public void updatePouredCostAndBeerLeftText()
